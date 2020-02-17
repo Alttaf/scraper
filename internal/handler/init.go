@@ -4,23 +4,30 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
-var (
-	server *http.Server
-)
+// Config for server
+type Config struct {
+	dataStore string
+}
 
-//Init - main init function to create server
-func Init() {
-
-	r := http.NewServeMux()
+func initializeRoutes(r *mux.Router) {
 	r.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Println("/health called")
 		w.Write([]byte(`{"health":"ok"}`))
 	})
 	r.HandleFunc("/scrape", scrapeSite)
 
-	server = &http.Server{
+}
+
+//New - create a new insance of the handler
+func New(c *Config) *http.Server {
+	// you can use config to overrid any values
+	r := mux.NewRouter()
+	initializeRoutes(r)
+	return &http.Server{
 		Addr:              fmt.Sprintf("%s:%d", "127.0.0.1", 9999),
 		Handler:           r,
 		ReadHeaderTimeout: 60 * time.Second,

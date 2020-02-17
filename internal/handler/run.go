@@ -2,11 +2,12 @@ package handler
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 )
 
 // Run - run server
-func Run() {
+func Run(server *http.Server) {
 	// make channel for errors
 	serverErr := make(chan error, 1)
 	go func() {
